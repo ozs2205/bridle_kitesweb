@@ -1,0 +1,1383 @@
+{
+  "suite_name": "RISC-V Simulator API Test Suite",
+  "isa": "RV32I subset",
+  "test_count": 50,
+  "tests": [
+    {
+      "id": "RV01",
+      "category": "Arithmetic/logical",
+      "name": "ADD basic",
+      "purpose": "x3=42",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 17",
+        "addi x2, x0, 25",
+        "add x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x00000011",
+        "x2": "0x00000019",
+        "x3": "0x0000002A"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV02",
+      "category": "Arithmetic/logical",
+      "name": "SUB positive",
+      "purpose": "x3=42",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 50",
+        "addi x2, x0, 8",
+        "sub x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x00000032",
+        "x2": "0x00000008",
+        "x3": "0x0000002A"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV03",
+      "category": "Arithmetic/logical",
+      "name": "SUB negative wrap",
+      "purpose": "x3=0xfffffff3",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 7",
+        "addi x2, x0, 20",
+        "sub x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x00000007",
+        "x2": "0x00000014",
+        "x3": "0xFFFFFFF3"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV04",
+      "category": "Arithmetic/logical",
+      "name": "ADDI negative",
+      "purpose": "x1=-12; x2=-7",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -12",
+        "addi x2, x1, 5"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0xFFFFFFF4",
+        "x2": "0xFFFFFFF9"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV05",
+      "category": "Arithmetic/logical",
+      "name": "AND",
+      "purpose": "x3=24",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 60",
+        "addi x2, x0, 26",
+        "and x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x0000003C",
+        "x2": "0x0000001A",
+        "x3": "0x00000018"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV06",
+      "category": "Arithmetic/logical",
+      "name": "OR",
+      "purpose": "x3=58",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 40",
+        "addi x2, x0, 18",
+        "or x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x00000028",
+        "x2": "0x00000012",
+        "x3": "0x0000003A"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV07",
+      "category": "Arithmetic/logical",
+      "name": "XOR",
+      "purpose": "x3=38",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 60",
+        "addi x2, x0, 26",
+        "xor x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x0000003C",
+        "x2": "0x0000001A",
+        "x3": "0x00000026"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV08",
+      "category": "Arithmetic/logical",
+      "name": "ANDI",
+      "purpose": "x2=13",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 93",
+        "andi x2, x1, 15"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x0000005D",
+        "x2": "0x0000000D"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV09",
+      "category": "Arithmetic/logical",
+      "name": "ORI and XORI",
+      "purpose": "x2=15; x3=12",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 10",
+        "ori x2, x1, 5",
+        "xori x3, x2, 3"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x0000000A",
+        "x2": "0x0000000F",
+        "x3": "0x0000000C"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV10",
+      "category": "Arithmetic/logical",
+      "name": "SLT signed",
+      "purpose": "x3=1; x4=0",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -4",
+        "addi x2, x0, 3",
+        "slt x3, x1, x2",
+        "slt x4, x2, x1"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0xFFFFFFFC",
+        "x2": "0x00000003",
+        "x3": "0x00000001"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV11",
+      "category": "Shift",
+      "name": "SLLI",
+      "purpose": "x2=48",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 3",
+        "slli x2, x1, 4"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x00000003",
+        "x2": "0x00000030"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV12",
+      "category": "Shift",
+      "name": "SRLI",
+      "purpose": "x2=30",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 240",
+        "srli x2, x1, 3"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x000000F0",
+        "x2": "0x0000001E"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV13",
+      "category": "Shift",
+      "name": "SRAI negative",
+      "purpose": "x2=0xfffffff8",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -32",
+        "srai x2, x1, 2"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0xFFFFFFE0",
+        "x2": "0xFFFFFFF8"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV14",
+      "category": "Shift",
+      "name": "SLL register",
+      "purpose": "x3=40",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 5",
+        "addi x2, x0, 3",
+        "sll x3, x1, x2"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x00000005",
+        "x2": "0x00000003",
+        "x3": "0x00000028"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV15",
+      "category": "Shift",
+      "name": "SRL vs SRA",
+      "purpose": "x3=0x0ffffffff8000000 (RV64); x4=0xfffffffff8000000",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "lui x1, 0x80000",
+        "addi x2, x0, 4",
+        "srl x3, x1, x2",
+        "sra x4, x1, x2"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x80000000",
+        "x2": "0x00000004",
+        "x3": "0x0FFFFFFFF8000000",
+        "x4": "0xF8000000"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV16",
+      "category": "Branch/control flow",
+      "name": "BEQ taken",
+      "purpose": "x3=7",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 9",
+        "addi x2, x0, 9",
+        "beq x1, x2, equal",
+        "addi x3, x0, 1",
+        "equal: addi x3, x0, 7"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000009",
+        "x2": "0x00000009",
+        "x3": "0x00000007"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV17",
+      "category": "Branch/control flow",
+      "name": "BEQ not taken",
+      "purpose": "x3=1; x4=2",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 9",
+        "addi x2, x0, 4",
+        "beq x1, x2, equal",
+        "addi x3, x0, 1",
+        "beq x0, x0, done",
+        "equal: addi x3, x0, 7",
+        "done: addi x4, x0, 2"
+      ],
+      "instruction_count_executed": 6,
+      "expected_registers": {
+        "x1": "0x00000009",
+        "x2": "0x00000004",
+        "x3": "0x00000001",
+        "x4": "0x00000002"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV18",
+      "category": "Branch/control flow",
+      "name": "BNE taken",
+      "purpose": "x3=8",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 3",
+        "addi x2, x0, 4",
+        "bne x1, x2, diff",
+        "addi x3, x0, 1",
+        "diff: addi x3, x0, 8"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000003",
+        "x2": "0x00000004",
+        "x3": "0x00000008"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV19",
+      "category": "Branch/control flow",
+      "name": "BLT signed",
+      "purpose": "x3=1",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -2",
+        "addi x2, x0, 1",
+        "blt x1, x2, less",
+        "addi x3, x0, 0",
+        "less: addi x3, x0, 1"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0xFFFFFFFE",
+        "x2": "0x00000001",
+        "x3": "0x00000001"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV20",
+      "category": "Branch/control flow",
+      "name": "BGE signed",
+      "purpose": "x3=1; x4=5",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -2",
+        "addi x2, x0, 1",
+        "bge x1, x2, ge",
+        "addi x3, x0, 1",
+        "beq x0, x0, done",
+        "ge: addi x3, x0, 9",
+        "done: addi x4, x0, 5"
+      ],
+      "instruction_count_executed": 6,
+      "expected_registers": {
+        "x1": "0xFFFFFFFE",
+        "x2": "0x00000001",
+        "x3": "0x00000001",
+        "x4": "0x00000005"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV21",
+      "category": "Branch/control flow",
+      "name": "BLTU unsigned",
+      "purpose": "x3=6",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "lui x1, 0x80000",
+        "addi x2, x0, 1",
+        "bltu x2, x1, less",
+        "addi x3, x0, 0",
+        "less: addi x3, x0, 6"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x80000000",
+        "x2": "0x00000001",
+        "x3": "0x00000006"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV22",
+      "category": "Branch/control flow",
+      "name": "BGEU unsigned",
+      "purpose": "x3=7",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "lui x1, 0x80000",
+        "addi x2, x0, 1",
+        "bgeu x1, x2, ge",
+        "addi x3, x0, 0",
+        "ge: addi x3, x0, 7"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x80000000",
+        "x2": "0x00000001",
+        "x3": "0x00000007"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV23",
+      "category": "Branch/control flow",
+      "name": "JAL link",
+      "purpose": "x1=0; x2=12; x5=4",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "jal x5, target",
+        "addi x1, x0, 99",
+        "target: addi x2, x0, 12"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x2": "0x0000000C",
+        "x5": "0x00000004"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV24",
+      "category": "Loops/iteration",
+      "name": "Count-up loop",
+      "purpose": "x1=5; x2=5",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 0",
+        "addi x2, x0, 5",
+        "loop: addi x1, x1, 1",
+        "blt x1, x2, loop"
+      ],
+      "instruction_count_executed": 12,
+      "expected_registers": {
+        "x1": "0x00000005",
+        "x2": "0x00000005"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV25",
+      "category": "Loops/iteration",
+      "name": "Sum 1 through 5",
+      "purpose": "x1=6; x2=15",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 1",
+        "addi x2, x0, 0",
+        "addi x3, x0, 6",
+        "loop: add x2, x2, x1",
+        "addi x1, x1, 1",
+        "blt x1, x3, loop"
+      ],
+      "instruction_count_executed": 18,
+      "expected_registers": {
+        "x1": "0x00000006",
+        "x2": "0x0000000F",
+        "x3": "0x00000006"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV26",
+      "category": "Loops/iteration",
+      "name": "Factorial 5 using repeated addition",
+      "purpose": "x1=120; x2=6",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 1",
+        "addi x2, x0, 2",
+        "addi x3, x0, 6",
+        "outer: addi x4, x0, 0",
+        "addi x5, x0, 0",
+        "inner: add x4, x4, x1",
+        "addi x5, x5, 1",
+        "blt x5, x2, inner",
+        "addi x1, x4, 0",
+        "addi x2, x2, 1",
+        "blt x2, x3, outer"
+      ],
+      "instruction_count_executed": 65,
+      "expected_registers": {
+        "x1": "0x00000078",
+        "x2": "0x00000006",
+        "x3": "0x00000006",
+        "x4": "0x00000078",
+        "x5": "0x00000005"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV27",
+      "category": "Loops/iteration",
+      "name": "Countdown",
+      "purpose": "x1=0; x2=5",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 5",
+        "addi x2, x0, 0",
+        "loop: addi x2, x2, 1",
+        "addi x1, x1, -1",
+        "bne x1, x0, loop"
+      ],
+      "instruction_count_executed": 17,
+      "expected_registers": {
+        "x2": "0x00000005"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV28",
+      "category": "Loops/iteration",
+      "name": "Repeated doubling",
+      "purpose": "x1=16; x2=0",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 1",
+        "addi x2, x0, 4",
+        "loop: add x1, x1, x1",
+        "addi x2, x2, -1",
+        "bne x2, x0, loop"
+      ],
+      "instruction_count_executed": 14,
+      "expected_registers": {
+        "x1": "0x00000010"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV29",
+      "category": "Loops/iteration",
+      "name": "Nested loops",
+      "purpose": "x1=3; x2=3",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 0",
+        "addi x2, x0, 0",
+        "addi x3, x0, 3",
+        "outer: addi x2, x0, 0",
+        "addi x1, x1, 1",
+        "inner: addi x2, x2, 1",
+        "blt x2, x3, inner",
+        "blt x1, x3, outer"
+      ],
+      "instruction_count_executed": 30,
+      "expected_registers": {
+        "x1": "0x00000003",
+        "x2": "0x00000003",
+        "x3": "0x00000003"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV30",
+      "category": "Loops/iteration",
+      "name": "Loop with conditional accumulation",
+      "purpose": "x2=9; x1=7",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 1",
+        "addi x2, x0, 0",
+        "addi x3, x0, 7",
+        "loop: andi x4, x1, 1",
+        "beq x4, x0, skip",
+        "add x2, x2, x1",
+        "skip: addi x1, x1, 1",
+        "blt x1, x3, loop"
+      ],
+      "instruction_count_executed": 30,
+      "expected_registers": {
+        "x1": "0x00000007",
+        "x2": "0x00000009",
+        "x3": "0x00000007"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV31",
+      "category": "Memory",
+      "name": "SW then LW",
+      "purpose": "x3=123; mem[0x100..103]=7b 00 00 00",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 123",
+        "sw x2, 0(x1)",
+        "lw x3, 0(x1)"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x0000007B",
+        "x3": "0x0000007B"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x7B"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV32",
+      "category": "Memory",
+      "name": "Two adjacent words",
+      "purpose": "x4=11; x5=22",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 11",
+        "addi x3, x0, 22",
+        "sw x2, 0(x1)",
+        "sw x3, 4(x1)",
+        "lw x4, 0(x1)",
+        "lw x5, 4(x1)"
+      ],
+      "instruction_count_executed": 7,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x0000000B",
+        "x3": "0x00000016",
+        "x4": "0x0000000B",
+        "x5": "0x00000016"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x0B",
+        "0x00000104": "0x16"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV33",
+      "category": "Memory",
+      "name": "LD loads a full doubleword (little-endian)",
+      "purpose": "x2=0xffffffffffffff80 (all 8 bytes loaded, byte 0x100 is least significant)",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {
+        "0x100": 128,
+        "0x101": 255,
+        "0x102": 255,
+        "0x103": 255,
+        "0x104": 255,
+        "0x105": 255,
+        "0x106": 255,
+        "0x107": 255
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "ld x2, 0(x1)"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x0000000000000100",
+        "x2": "0xFFFFFFFFFFFFFF80"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x80",
+        "0x00000101": "0xFF",
+        "0x00000107": "0xFF"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV34",
+      "category": "Memory",
+      "name": "LBU zero extension",
+      "purpose": "x2=128",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {
+        "0x100": 128
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "lbu x2, 0(x1)"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x00000080"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x80"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV35",
+      "category": "Memory",
+      "name": "LH sign extension",
+      "purpose": "x2=0xffff_8001",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {
+        "0x100": 1,
+        "0x101": 128
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "lh x2, 0(x1)"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0xFFFF8001"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x01",
+        "0x00000101": "0x80"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV36",
+      "category": "Memory",
+      "name": "LHU zero extension",
+      "purpose": "x2=32769",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {
+        "0x100": 1,
+        "0x101": 128
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "lhu x2, 0(x1)"
+      ],
+      "instruction_count_executed": 2,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x00008001"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x01",
+        "0x00000101": "0x80"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV37",
+      "category": "Memory",
+      "name": "SD writes exactly 8 bytes, preserves neighbours",
+      "purpose": "mem[0x108]=0x5a, mem[0x109..0x10f]=0; mem[0x107] and mem[0x110] unchanged",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {
+        "0x107": 17,
+        "0x108": 34,
+        "0x109": 51,
+        "0x10f": 68,
+        "0x110": 85
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 0x5a",
+        "sd x2, 8(x1)"
+      ],
+      "instruction_count_executed": 3,
+      "expected_registers": {
+        "x1": "0x0000000000000100",
+        "x2": "0x000000000000005A"
+      },
+      "expected_memory_bytes": {
+        "0x00000107": "0x11",
+        "0x00000108": "0x5A",
+        "0x00000109": "0x00",
+        "0x0000010A": "0x00",
+        "0x0000010B": "0x00",
+        "0x0000010C": "0x00",
+        "0x0000010D": "0x00",
+        "0x0000010E": "0x00",
+        "0x0000010F": "0x00",
+        "0x00000110": "0x55"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV38",
+      "category": "Memory",
+      "name": "SH writes two bytes",
+      "purpose": "mem[0x100]=0x78; mem[0x101]=0x06",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "lui x2, 0x12345",
+        "addi x2, x2, 0x678",
+        "sh x2, 0(x1)"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x12345678"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x78",
+        "0x00000101": "0x56"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV39",
+      "category": "Memory",
+      "name": "Store/load negative word",
+      "purpose": "x3=0xfffffff9",
+      "initial_registers": {
+        "x1": 256
+      },
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, -7",
+        "sw x2, 0(x1)",
+        "lw x3, 0(x1)"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0xFFFFFFF9",
+        "x3": "0xFFFFFFF9"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0xF9",
+        "0x00000101": "0xFF",
+        "0x00000102": "0xFF",
+        "0x00000103": "0xFF"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV40",
+      "category": "Memory",
+      "name": "Base plus offset addressing",
+      "purpose": "x3=77; mem[0x108..10b]=4d 00 00 00",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 77",
+        "sw x2, 8(x1)",
+        "lw x3, 8(x1)"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x2": "0x0000004D",
+        "x3": "0x0000004D"
+      },
+      "expected_memory_bytes": {
+        "0x00000108": "0x4D"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV41",
+      "category": "Combined",
+      "name": "Array sum",
+      "purpose": "x2=100; x3=0; x1=272",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 1,
+        "0x101": 0,
+        "0x102": 0,
+        "0x103": 0,
+        "0x104": 2,
+        "0x105": 0,
+        "0x106": 0,
+        "0x107": 0,
+        "0x108": 3,
+        "0x109": 0,
+        "0x10a": 0,
+        "0x10b": 0,
+        "0x10c": 94,
+        "0x10d": 0,
+        "0x10e": 0,
+        "0x10f": 0
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 0",
+        "addi x3, x0, 4",
+        "loop: lw x4, 0(x1)",
+        "add x2, x2, x4",
+        "addi x1, x1, 4",
+        "addi x3, x3, -1",
+        "bne x3, x0, loop"
+      ],
+      "instruction_count_executed": 23,
+      "expected_registers": {
+        "x1": "0x00000110",
+        "x2": "0x00000064",
+        "x4": "0x0000005E"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x01",
+        "0x00000104": "0x02",
+        "0x00000108": "0x03",
+        "0x0000010C": "0x5E"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV42",
+      "category": "Combined",
+      "name": "Array copy",
+      "purpose": "x3=0; mem[0x120]=10, mem[0x124]=20, mem[0x128]=30",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 10,
+        "0x104": 20,
+        "0x108": 30
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 288",
+        "addi x3, x0, 3",
+        "loop: lw x4, 0(x1)",
+        "sw x4, 0(x2)",
+        "addi x1, x1, 4",
+        "addi x2, x2, 4",
+        "addi x3, x3, -1",
+        "bne x3, x0, loop"
+      ],
+      "instruction_count_executed": 21,
+      "expected_registers": {
+        "x1": "0x0000010C",
+        "x2": "0x0000012C",
+        "x4": "0x0000001E"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x0A",
+        "0x00000104": "0x14",
+        "0x00000108": "0x1E",
+        "0x00000120": "0x0A",
+        "0x00000124": "0x14",
+        "0x00000128": "0x1E"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV43",
+      "category": "Combined",
+      "name": "Find maximum",
+      "purpose": "x2=19; x3=4",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 7,
+        "0x101": 0,
+        "0x102": 0,
+        "0x103": 0,
+        "0x104": 19,
+        "0x105": 0,
+        "0x106": 0,
+        "0x107": 0,
+        "0x108": 4,
+        "0x109": 0,
+        "0x10a": 0,
+        "0x10b": 0,
+        "0x10c": 12,
+        "0x10d": 0,
+        "0x10e": 0,
+        "0x10f": 0
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "lw x2, 0(x1)",
+        "addi x3, x0, 1",
+        "addi x4, x0, 4",
+        "loop: addi x1, x1, 4",
+        "lw x5, 0(x1)",
+        "bge x2, x5, keep",
+        "addi x2, x5, 0",
+        "keep: addi x3, x3, 1",
+        "blt x3, x4, loop"
+      ],
+      "instruction_count_executed": 20,
+      "expected_registers": {
+        "x1": "0x0000010C",
+        "x2": "0x00000013",
+        "x3": "0x00000004",
+        "x4": "0x00000004",
+        "x5": "0x0000000C"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x07",
+        "0x00000104": "0x13",
+        "0x00000108": "0x04",
+        "0x0000010C": "0x0C"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV44",
+      "category": "Combined",
+      "name": "Count positive values",
+      "purpose": "x2=2; x3=0",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 5,
+        "0x101": 0,
+        "0x102": 0,
+        "0x103": 0,
+        "0x104": 254,
+        "0x105": 255,
+        "0x106": 255,
+        "0x107": 255,
+        "0x108": 9,
+        "0x109": 0,
+        "0x10A": 0,
+        "0x10B": 0,
+        "0x10C": 255,
+        "0x10D": 255,
+        "0x10E": 255,
+        "0x10F": 255
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 0",
+        "addi x3, x0, 4",
+        "loop: lw x4, 0(x1)",
+        "blt x4, x0, neg",
+        "addi x2, x2, 1",
+        "neg: addi x1, x1, 4",
+        "addi x3, x3, -1",
+        "bne x3, x0, loop"
+      ],
+      "instruction_count_executed": 25,
+      "expected_registers": {
+        "x1": "0x00000110",
+        "x2": "0x00000002",
+        "x4": "0xFFFFFFFF"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x05",
+        "0x00000104": "0xFE",
+        "0x00000105": "0xFF",
+        "0x00000106": "0xFF",
+        "0x00000107": "0xFF",
+        "0x00000108": "0x09",
+        "0x0000010C": "0xFF",
+        "0x0000010D": "0xFF",
+        "0x0000010E": "0xFF",
+        "0x0000010F": "0xFF"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV45",
+      "category": "Combined",
+      "name": "Bit mask extraction",
+      "purpose": "x3=0x56",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "lui x1, 0x12345",
+        "addi x1, x1, 0x678",
+        "srli x2, x1, 8",
+        "andi x3, x2, 255"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0x12345678",
+        "x2": "0x00123456",
+        "x3": "0x00000056"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV46",
+      "category": "Combined",
+      "name": "Absolute value",
+      "purpose": "x2=37; x3=38",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, -37",
+        "blt x1, x0, negative",
+        "addi x2, x1, 0",
+        "beq x0, x0, done",
+        "negative: sub x2, x0, x1",
+        "done: addi x3, x2, 1"
+      ],
+      "instruction_count_executed": 4,
+      "expected_registers": {
+        "x1": "0xFFFFFFDB",
+        "x2": "0x00000025",
+        "x3": "0x00000026"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV47",
+      "category": "Combined",
+      "name": "Sum even numbers 2..10",
+      "purpose": "x2=30; x1=12",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 2",
+        "addi x2, x0, 0",
+        "addi x3, x0, 12",
+        "loop: add x2, x2, x1",
+        "addi x1, x1, 2",
+        "blt x1, x3, loop"
+      ],
+      "instruction_count_executed": 18,
+      "expected_registers": {
+        "x1": "0x0000000C",
+        "x2": "0x0000001E",
+        "x3": "0x0000000C"
+      },
+      "expected_memory_bytes": {},
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV48",
+      "category": "Combined",
+      "name": "Store running totals",
+      "purpose": "x2=6; mem words 1,3,6",
+      "initial_registers": {},
+      "initial_memory_bytes": {},
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 0",
+        "addi x3, x0, 1",
+        "addi x4, x0, 4",
+        "loop: add x2, x2, x3",
+        "sw x2, 0(x1)",
+        "addi x1, x1, 4",
+        "addi x3, x3, 1",
+        "blt x3, x4, loop"
+      ],
+      "instruction_count_executed": 19,
+      "expected_registers": {
+        "x1": "0x0000010C",
+        "x2": "0x00000006",
+        "x3": "0x00000004",
+        "x4": "0x00000004"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x01",
+        "0x00000104": "0x03",
+        "0x00000108": "0x06"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV49",
+      "category": "Combined",
+      "name": "Swap two memory words",
+      "purpose": "mem[0x100]=22; mem[0x104]=11",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 11,
+        "0x104": 22
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "lw x3, 0(x1)",
+        "lw x4, 4(x1)",
+        "sw x4, 0(x1)",
+        "sw x3, 4(x1)"
+      ],
+      "instruction_count_executed": 5,
+      "expected_registers": {
+        "x1": "0x00000100",
+        "x3": "0x0000000B",
+        "x4": "0x00000016"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x16",
+        "0x00000104": "0x0B"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    },
+    {
+      "id": "RV50",
+      "category": "Combined",
+      "name": "Compute dot product length 3",
+      "purpose": "x3=32; x4=0",
+      "initial_registers": {},
+      "initial_memory_bytes": {
+        "0x100": 2,
+        "0x104": 3,
+        "0x108": 4,
+        "0x120": 3,
+        "0x124": 2,
+        "0x128": 1
+      },
+      "assembly": [
+        "addi x1, x0, 256",
+        "addi x2, x0, 288",
+        "addi x3, x0, 0",
+        "addi x4, x0, 3",
+        "loop: lw x5, 0(x1)",
+        "lw x6, 0(x2)",
+        "addi x7, x0, 0",
+        "addi x8, x0, 0",
+        "inner: add x7, x7, x5",
+        "addi x8, x8, 1",
+        "blt x8, x6, inner",
+        "add x3, x3, x7",
+        "addi x1, x1, 4",
+        "addi x2, x2, 4",
+        "addi x4, x4, -1",
+        "bne x4, x0, loop"
+      ],
+      "instruction_count_executed": 49,
+      "expected_registers": {
+        "x1": "0x0000010C",
+        "x2": "0x0000012C",
+        "x3": "0x00000010",
+        "x5": "0x00000004",
+        "x6": "0x00000001",
+        "x7": "0x00000004",
+        "x8": "0x00000001"
+      },
+      "expected_memory_bytes": {
+        "0x00000100": "0x02",
+        "0x00000104": "0x03",
+        "0x00000108": "0x04",
+        "0x00000120": "0x03",
+        "0x00000124": "0x02",
+        "0x00000128": "0x01"
+      },
+      "expected_memory_note": "Unlisted memory bytes are unchanged from the initial memory image.",
+      "expected_register_note": "x0 must remain 0x00000000; unlisted registers retain their initial values."
+    }
+  ]
+}

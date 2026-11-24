@@ -1,0 +1,43 @@
+/* Bridle frontend styles (Tailwind CDN handles utilities; this file adds the rest). */
+:root { color-scheme: dark; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+
+.tab-active { border-color: #38bdf8; color: #e0f2fe; }
+.tab-idle { border-color: transparent; color: #94a3b8; }
+.tab-idle:hover { color: #e2e8f0; }
+
+.row-changed { background-color: rgba(250, 204, 21, 0.14); }
+tbody tr { transition: background-color .25s ease; }
+tbody tr:hover { background-color: rgba(148, 163, 184, 0.08); }
+thead th { position: sticky; top: 0; background: #0f172a; z-index: 1; box-shadow: 0 1px 0 #1e293b; }
+
+button, label { transition: background-color .15s ease, opacity .15s ease, color .15s ease; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+button:focus-visible, label:focus-within, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #38bdf8; outline-offset: 1px;
+}
+#editor { tab-size: 4; white-space: pre; overflow: auto; }
+#sessionId { max-width: 20rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#busyLabel { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .4; } }
+
+/* Scrollbars */
+* { scrollbar-width: thin; scrollbar-color: #334155 transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Console */
+#consoleBody { background: #020617; }
+#consoleBody.hidden { display: none; }
+
+/* Responsive: below the two-column breakpoint let the page scroll instead of clipping */
+@media (max-width: 1023px) {
+  html, body { height: auto !important; min-height: 100%; }
+  body > div { height: auto !important; min-height: 100vh; }
+  main { flex: none !important; }
+  main > section { height: 30rem; }
+  header { flex-wrap: wrap; row-gap: .5rem; }
+  header > div { margin-left: 0 !important; flex-wrap: wrap; }
+  #sessionId { max-width: 12rem; }
+}

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bridle - KITES test console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .tab-active { border-color: #38bdf8; color: #e0f2fe; }
+    .tab-idle { border-color: transparent; color: #94a3b8; }
+    .row-changed { background-color: rgba(250, 204, 21, 0.14); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    thead th { position: sticky; top: 0; background: #0f172a; z-index: 1; }
+  </style>
+</head>
+<body class="h-full bg-slate-950 text-slate-200 text-sm">
+<div class="h-full flex flex-col">
+
+  <!-- Header bar -->
+  <header class="flex items-center gap-3 px-4 py-2 bg-slate-900 border-b border-slate-800">
+    <h1 class="font-semibold text-slate-100 tracking-wide">Bridle <span class="text-slate-500 font-normal">/ KITES test console</span></h1>
+    <div class="ml-auto flex items-center gap-3">
+      <span class="text-slate-400">Session ID</span>
+      <code id="sessionId" class="mono px-2 py-1 rounded bg-slate-800 text-sky-300">none</code>
+      <button id="btnNewSession" class="action-btn px-3 py-1 rounded bg-sky-600 hover:bg-sky-500 text-white font-medium">New Session</button>
+    </div>
+  </header>
+
+  <!-- Main area -->
+  <main class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 gap-3 p-3">
+
+    <!-- Left: code editor -->
+    <section class="min-h-0 flex flex-col rounded-lg border border-slate-800 bg-slate-900">
+      <div class="px-3 py-2 border-b border-slate-800 flex flex-wrap items-center gap-2">
+        <span class="font-medium text-slate-300 mr-auto">Assembly (single-cycle VM)</span>
+        <button id="btnExecute" class="action-btn px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-medium">Execute</button>
+        <button id="btnReset" class="action-btn px-3 py-1 rounded bg-amber-600 hover:bg-amber-500 text-white font-medium">Reset</button>
+        <button id="btnSave" class="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-100">Save Code</button>
+        <label class="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600 text-slate-100 cursor-pointer">
+          Load File
+          <input id="fileInput" type="file" accept=".s,.S,.asm,.txt,text/plain" class="hidden">
+        </label>
+      </div>
+      <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off"
+        class="mono flex-1 min-h-[16rem] w-full resize-none bg-slate-950 text-slate-100 p-3 outline-none leading-6"></textarea>
+    </section>
+
+    <!-- Right: state tabs -->
+    <section class="min-h-0 flex flex-col rounded-lg border border-slate-800 bg-slate-900">
+      <div class="flex border-b border-slate-800">
+        <button id="tabRegs" class="px-4 py-2 border-b-2 tab-active font-medium">Registers</button>
+        <button id="tabMem" class="px-4 py-2 border-b-2 tab-idle font-medium">Memory View</button>
+      </div>
+
+      <!-- Registers tab -->
+      <div id="panelRegs" class="flex-1 min-h-0 flex flex-col">
+        <div id="statsBar" class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 border-b border-slate-800"></div>
+        <div class="flex-1 min-h-0 overflow-auto">
+          <table class="w-full mono text-xs">
+            <thead>
+              <tr class="text-left text-slate-400">
+                <th class="px-3 py-1 font-medium">Reg</th>
+                <th class="px-3 py-1 font-medium">ABI</th>
+                <th class="px-3 py-1 font-medium">Hex</th>
+                <th class="px-3 py-1 font-medium text-right">Decimal (signed)</th>
+              </tr>
+            </thead>
+            <tbody id="regBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Memory tab -->
+      <div id="panelMem" class="hidden flex-1 min-h-0 flex flex-col">
+        <div class="flex flex-wrap items-end gap-3 p-3 border-b border-slate-800">
+          <label class="flex flex-col gap-1">
+            <span class="text-slate-400">Hex address</span>
+            <input id="memAddr" type="text" value="0x1000" class="mono w-40 px-2 py-1 rounded bg-slate-800 border border-slate-700 outline-none focus:border-sky-500">
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-slate-400">Rows (8 bytes each)</span>
+            <input id="memRows" type="number" min="1" max="1024" value="4" class="mono w-28 px-2 py-1 rounded bg-slate-800 border border-slate-700 outline-none focus:border-sky-500">
+          </label>
+          <button id="btnFetchMem" class="action-btn px-3 py-1 rounded bg-sky-600 hover:bg-sky-500 text-white font-medium">Fetch Memory</button>
+        </div>
+        <div class="flex-1 min-h-0 overflow-auto">
+          <table class="w-full mono text-xs">
+            <thead>
+              <tr class="text-left text-slate-400">
+                <th class="px-3 py-1 font-medium">Address</th>
+                <th class="px-3 py-1 font-medium">Value (8 bytes)</th>
+              </tr>
+            </thead>
+            <tbody id="memBody">
+              <tr><td colspan="2" class="px-3 py-3 text-slate-500">No memory fetched yet.</td></tr>
+            </tbody>
+          </table>
+          <details class="px-3 py-2 text-slate-400">
+            <summary class="cursor-pointer">Raw response</summary>
+            <pre id="memRaw" class="mono text-xs mt-2 whitespace-pre-wrap break-all"></pre>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Console drawer -->
+  <section id="consoleDrawer" class="border-t border-slate-800 bg-slate-900 flex flex-col">
+    <div class="flex items-center gap-3 px-3 py-1 border-b border-slate-800">
+      <button id="btnToggleConsole" class="font-medium text-slate-300 hover:text-white">Console <span id="consoleArrow">&#9662;</span></button>
+      <span id="busyLabel" class="text-sky-400 hidden">working...</span>
+      <button id="btnClearConsole" class="ml-auto text-slate-400 hover:text-white">Clear</button>
+    </div>
+    <div id="consoleBody" class="mono text-xs h-44 overflow-y-auto px-3 py-2 space-y-0.5"></div>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+const API = "http://127.0.0.1:8000";
+const ABI_NAMES = [
+  "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+  "s0/fp", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+  "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+  "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+];
+const DEFAULT_PROGRAM = [
+  "# Print 42, then exit with code 0",
+  "li   a0, 42       # value to print",
+  "li   a7, 1        # SYSCALL_PRINT_INT",
+  "ecall",
+  "",
+  "li   a0, 0        # exit code",
+  "li   a7, 10       # SYSCALL_EXIT",
+  "ecall",
+  ""
+].join("\n");
+
+const app = { sessionId: null, busy: false, prevRegs: null };
+const $ = (id) => document.getElementById(id);
+
+/* ------------------------------ console ------------------------------ */
+function log(level, message) {
+  const colors = { info: "text-slate-300", ok: "text-emerald-400", warn: "text-amber-300", error: "text-rose-400", out: "text-sky-300" };
+  const line = document.createElement("div");
+  line.className = "whitespace-pre-wrap break-words " + (colors[level] || colors.info);
+  const time = new Date().toLocaleTimeString([], { hour12: false });
+  line.textContent = "[" + time + "] " + message;   // textContent: program output is never parsed as HTML
+  const body = $("consoleBody");
+  body.appendChild(line);
+  body.scrollTop = body.scrollHeight;
+}
+
+/* ------------------------------- API --------------------------------- */
+class ApiError extends Error {
+  constructor(status, code, message, details) {
+    super(message);
+    this.status = status; this.code = code; this.details = details;
+  }
+}
+
+async function api(method, path, body) {
+  let res;
+  try {
+    res = await fetch(API + path, {
+      method,
+      headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    });
+  } catch (err) {
+    throw new ApiError(0, "NETWORK", "Cannot reach Bridle at " + API + " (is the server running? is CORS allowed?)");
+  }
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch (e) { /* non-JSON body */ }
+  if (!res.ok) {
+    const e = data && data.error ? data.error : { code: "HTTP_" + res.status, message: text.slice(0, 300) || res.statusText };
+    throw new ApiError(res.status, e.code, e.message, e.details);
+  }
+  return data;
+}
+
+function logApiError(err, context) {
+  if (!(err instanceof ApiError)) { log("error", context + ": " + err); return; }
+  log("error", context + ": [" + err.code + "] " + err.message);
+  if (err.details && Array.isArray(err.details.errors)) {
+    err.details.errors.forEach((p) => log("error", "  " + (p.line != null ? "line " + p.line + ": " : "") + p.message));
+  }
+  if (err.details && Array.isArray(err.details.problems)) {
+    err.details.problems.forEach((p) => log("error", "  " + p.field + ": " + p.message));
+  }
+}
+
+/* ------------------------------ busy state ---------------------------- */
+function setBusy(flag) {
+  app.busy = flag;
+  document.querySelectorAll(".action-btn").forEach((b) => { b.disabled = flag; });
+  $("busyLabel").classList.toggle("hidden", !flag);
+}
+
+async function guarded(fn) {
+  if (app.busy) return;
+  setBusy(true);
+  try { await fn(); } finally { setBusy(false); }
+}
+
+/* ------------------------------ sessions ------------------------------ */
+function showSession() {
+  $("sessionId").textContent = app.sessionId || "none";
+}
+
+async function createSession() {
+  if (app.sessionId) {
+    const old = app.sessionId;
+    try { await api("DELETE", "/sessions/" + old); log("info", "Closed previous session " + old); }
+    catch (err) { /* it may already have expired: ignore */ }
+  }
+  const data = await api("POST", "/sessions");
+  app.sessionId = data.session_id;
+  app.prevRegs = null;
+  showSession();
+  renderRegisters(null);
+  renderStats(null);
+  log("ok", "New session " + app.sessionId);
+}
+
+async function ensureSession() {
+  if (!app.sessionId) await createSession();
+}
+
+/* ------------------------------ rendering ----------------------------- */
+function fmtStat(v, digits) {
+  if (v === null || v === undefined) return "-";
+  return typeof v === "number" && digits !== undefined && !Number.isInteger(v) ? v.toFixed(digits) : String(v);
+}
+
+function renderStats(data) {
+  const s = (data && data.stats) || {};
+  const items = [
+    ["PC", data ? data.pc : "-"],
+    ["Cycles", fmtStat(s.cycles)],
+    ["Instructions", fmtStat(s.instructions_retired)],
+    ["CPI", fmtStat(s.cpi, 3)],
+    ["IPC", fmtStat(s.ipc, 3)],
+    ["Stall cycles", fmtStat(s.stall_cycles)],
+    ["Branch mispredicts", fmtStat(s.branch_mispredictions)]
+  ];
+  const bar = $("statsBar");
+  bar.textContent = "";
+  items.forEach(([label, value]) => {
+    const card = document.createElement("div");
+    card.className = "rounded bg-slate-800 px-2 py-1";
+    const l = document.createElement("div");
+    l.className = "text-slate-400 text-xs";
+    l.textContent = label;
+    const v = document.createElement("div");
+    v.className = "mono text-slate-100 break-all";
+    v.textContent = value;
+    card.appendChild(l); card.appendChild(v);
+    bar.appendChild(card);
+  });
+}
+
+function signedDecimal(hex) {
+  try { return BigInt.asIntN(64, BigInt(hex)).toString(); } catch (e) { return "-"; }
+}
+
+function renderRegisters(data) {
+  const regs = data && data.registers ? data.registers : null;
+  const body = $("regBody");
+  body.textContent = "";
+  for (let i = 0; i < 32; i++) {
+    const key = "x" + i;
+    const hex = regs && regs[key] !== undefined ? regs[key] : null;
+    const changed = hex !== null && app.prevRegs && app.prevRegs[key] !== undefined && app.prevRegs[key] !== hex;
+    const tr = document.createElement("tr");
+    tr.className = "border-t border-slate-800" + (changed ? " row-changed" : "");
+    const cells = [
+      [key, "px-3 py-1 text-slate-300"],
+      [ABI_NAMES[i], "px-3 py-1 text-slate-500"],
+      [hex === null ? "-" : hex, "px-3 py-1 text-slate-100"],
+      [hex === null ? "-" : signedDecimal(hex), "px-3 py-1 text-right text-slate-400"]
+    ];
+    cells.forEach(([text, cls]) => {
+      const td = document.createElement("td");
+      td.className = cls; td.textContent = text;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  }
+  if (regs) app.prevRegs = Object.assign({}, regs);
+}
+
+/* Memory dump layout is not fixed by the API, so collect every string leaf. */
+function flattenMemory(node, out) {
+  if (node && typeof node === "object") {
+    Object.keys(node).forEach((k) => {
+      const v = node[k];
+      if (typeof v === "string") out.push([k, v]);
+      else flattenMemory(v, out);
+    });
+  }
+  return out;
+}
+
+function renderMemory(memory) {
+  const body = $("memBody");
+  body.textContent = "";
+  $("memRaw").textContent = memory === null || memory === undefined ? "" : JSON.stringify(memory, null, 2);
+  const rows = flattenMemory(memory, []);
+  rows.sort((a, b) => {
+    try { const x = BigInt(a[0]), y = BigInt(b[0]); return x < y ? -1 : x > y ? 1 : 0; }
+    catch (e) { return a[0].localeCompare(b[0]); }
+  });
+  if (rows.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 2; td.className = "px-3 py-3 text-slate-500";
+    td.textContent = "No memory rows returned.";
+    tr.appendChild(td); body.appendChild(tr);
+    return;
+  }
+  rows.forEach(([addr, value]) => {
+    const tr = document.createElement("tr");
+    tr.className = "border-t border-slate-800";
+    [[addr, "px-3 py-1 text-slate-300"], [value, "px-3 py-1 text-slate-100"]].forEach(([text, cls]) => {
+      const td = document.createElement("td");
+      td.className = cls; td.textContent = text;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+/* --------------------------- state / actions -------------------------- */
+async function refreshState() {
+  const data = await api("GET", "/sessions/" + app.sessionId + "/state");
+  renderStats(data);
+  renderRegisters(data);
+  return data;
+}
+
+async function doExecute() {
+  const source = $("editor").value;
+  if (!source.trim()) { log("warn", "The editor is empty."); return; }
+  try {
+    await ensureSession();
+    const id = app.sessionId;
+
+    log("info", "Loading program (vm: single-cycle)...");
+    await api("POST", "/sessions/" + id + "/load", { source: source, vm: "single-cycle" });
+    log("ok", "Program loaded.");
+
+    log("info", "Executing (mode: run)...");
+    const r = await api("POST", "/sessions/" + id + "/execute", { mode: "run" });
+    (r.program_output || []).forEach((line) => log("out", "program output: " + line));
+    if (r.exit_code !== null && r.exit_code !== undefined) log("info", "Exited with exit code " + r.exit_code);
+    if (r.status === "error" && r.error) {
+      log("error", "Run failed: " + r.error.message + (r.error.line ? " (line " + r.error.line + ")" : ""));
+    } else {
+      log("ok", "Run status: " + r.status);
+    }
+
+    await refreshState();
+    log("info", "State refreshed.");
+  } catch (err) {
+    logApiError(err, "Execute");
+    if (err instanceof ApiError && (err.code === "TIMEOUT" || err.code === "REPL_CRASHED")) {
+      log("warn", "The simulator was restarted by the server; press Execute to load the program again.");
+    }
+  }
+}
+
+async function doReset() {
+  if (!app.sessionId) { log("warn", "No session yet; press Execute or New Session first."); return; }
+  try {
+    await api("POST", "/sessions/" + app.sessionId + "/reset");
+    log("ok", "Simulator reset (editor content kept).");
+    await refreshState();
+    log("info", "State refreshed.");
+  } catch (err) {
+    logApiError(err, "Reset");
+  }
+}
+
+async function doFetchMemory() {
+  if (!app.sessionId) { log("warn", "No session yet; press Execute first."); return; }
+  const addr = $("memAddr").value.trim();
+  const rows = parseInt($("memRows").value, 10);
+  if (!/^(0[xX])?[0-9a-fA-F]{1,16}$/.test(addr)) { log("error", "Address must be hexadecimal, e.g. 0x1000."); return; }
+  if (!Number.isInteger(rows) || rows < 1 || rows > 1024) { log("error", "Rows must be between 1 and 1024."); return; }
+  try {
+    const query = "memory=" + encodeURIComponent(addr + ":" + rows);
+    const data = await api("GET", "/sessions/" + app.sessionId + "/state?" + query);
+    renderStats(data);
+    renderRegisters(data);
+    if (data.memory_error) log("error", "Memory: " + data.memory_error);
+    else if (data.memory === null || data.memory === undefined) log("warn", "No memory data returned.");
+    else log("ok", "Fetched " + rows + " row(s) from " + addr + ".");
+    renderMemory(data.memory);
+  } catch (err) {
+    logApiError(err, "Fetch Memory");
+  }
+}
+
+function saveCode() {
+  const blob = new Blob([$("editor").value], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "program.s";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  log("info", "Saved editor content as program.s");
+}
+
+function loadFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => { $("editor").value = String(reader.result); log("info", "Loaded " + file.name + " (" + file.size + " bytes)"); };
+  reader.onerror = () => log("error", "Could not read " + file.name);
+  reader.readAsText(file);
+}
+
+/* -------------------------------- tabs -------------------------------- */
+function showTab(which) {
+  const regs = which === "regs";
+  $("panelRegs").classList.toggle("hidden", !regs);
+  $("panelMem").classList.toggle("hidden", regs);
+  $("tabRegs").className = "px-4 py-2 border-b-2 font-medium " + (regs ? "tab-active" : "tab-idle");
+  $("tabMem").className = "px-4 py-2 border-b-2 font-medium " + (regs ? "tab-idle" : "tab-active");
+}
+
+/* ------------------------------- wiring ------------------------------- */
+$("editor").value = DEFAULT_PROGRAM;
+$("editor").addEventListener("keydown", (e) => {
+  if (e.key === "Tab") {            // insert spaces instead of leaving the editor
+    e.preventDefault();
+    const t = e.target, s = t.selectionStart, end = t.selectionEnd;
+    t.value = t.value.slice(0, s) + "    " + t.value.slice(end);
+    t.selectionStart = t.selectionEnd = s + 4;
+  }
+});
+$("btnNewSession").addEventListener("click", () => guarded(async () => {
+  try { await createSession(); } catch (err) { logApiError(err, "New Session"); }
+}));
+$("btnExecute").addEventListener("click", () => guarded(doExecute));
+$("btnReset").addEventListener("click", () => guarded(doReset));
+$("btnFetchMem").addEventListener("click", () => guarded(doFetchMemory));
+$("btnSave").addEventListener("click", saveCode);
+$("fileInput").addEventListener("change", (e) => { loadFile(e.target.files[0]); e.target.value = ""; });
+$("tabRegs").addEventListener("click", () => showTab("regs"));
+$("tabMem").addEventListener("click", () => showTab("mem"));
+$("btnClearConsole").addEventListener("click", () => { $("consoleBody").textContent = ""; });
+$("btnToggleConsole").addEventListener("click", () => {
+  const body = $("consoleBody");
+  const hidden = body.classList.toggle("hidden");
+  $("consoleArrow").innerHTML = hidden ? "&#9656;" : "&#9662;";
+});
+
+renderStats(null);
+renderRegisters(null);
+showSession();
+log("info", "Ready. Bridle API: " + API + ". Press New Session, or just press Execute.");
+</script>
+</body>
+</html>
